@@ -1,0 +1,646 @@
+/* ============================================================
+   claudeis.gay — status page
+   Direction: deadpan SRE dashboard for one very unserious claim.
+   Type: Space Grotesk (display/body) + Space Mono (data & chrome).
+   Colour: deep ink-violet ground; the spectrum is used as DATA,
+           not decoration, so the rainbow actually means something.
+   ============================================================ */
+
+:root {
+  /* full-bleed sections pad by --gutter; boxed strips (banner, metrics)
+     match that inner edge with --wrap-inner so everything lines up */
+  /* ground */
+  --bg:        #12101A;
+  --bg-deep:   #0D0B14;
+  --surface:   #1B1826;
+  --surface-2: #221E30;
+  --line:      #2E2840;
+  --line-soft: #262133;
+
+  /* ink */
+  --text:      #EDEAF5;
+  --text-mid:  #A79FC0;
+  --text-dim:  #8177A0;
+
+  /* signal */
+  --pink:      #FF4D8D;
+  --mint:      #3DDC97;
+  --amber:     #F2C744;
+
+  /* the spectrum — used for real data only */
+  --s1: #E8425A;
+  --s2: #F08B35;
+  --s3: #F2C744;
+  --s4: #3DBE72;
+  --s5: #3D7FE0;
+  --s6: #9B5DE5;
+
+  --display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --mono: "Space Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* type scale */
+  --t-micro: 0.6875rem;  /* 11 */
+  --t-xs:    0.75rem;    /* 12 */
+  --t-sm:    0.875rem;   /* 14 */
+  --t-base:  1rem;       /* 16 */
+  --t-lede:  1.1875rem;  /* 19 */
+  --t-h3:    1.375rem;   /* 22 */
+  --t-h2:    1.75rem;    /* 28 */
+
+  --gutter: clamp(1.25rem, 5vw, 4.5rem);
+  --wrap: 1160px;
+  --wrap-inner: calc(1160px - (var(--gutter) * 2));
+  --radius: 4px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--display);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* faint spectrum wash along the top edge — one texture, not a blob */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 320px;
+  background:
+    radial-gradient(90rem 22rem at 18% -12%, rgba(155, 93, 229, 0.20), transparent 65%),
+    radial-gradient(70rem 20rem at 82% -18%, rgba(255, 77, 141, 0.13), transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+main, .topbar, footer { position: relative; z-index: 1; }
+
+h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+p { margin: 0; }
+code { font-family: var(--mono); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Off-canvas via transform, not a negative offset — a negative `left`
+   inflates the document's scrollable width on narrow viewports. */
+.skip {
+  position: absolute; top: 0; left: 0;
+  transform: translateY(-200%);
+  background: var(--pink); color: #17070E;
+  padding: 0.75rem 1rem; font-family: var(--mono);
+  font-size: var(--t-sm); font-weight: 700;
+  text-decoration: none; z-index: 99;
+}
+.skip:focus { transform: translateY(0); }
+
+:focus-visible {
+  outline: 2px solid var(--pink);
+  outline-offset: 3px;
+}
+
+/* ── Topbar ─────────────────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.125rem var(--gutter);
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: var(--t-sm);
+  letter-spacing: 0.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.wordmark-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.14);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px rgba(61, 220, 151, 0.14); }
+  50%      { box-shadow: 0 0 0 7px rgba(61, 220, 151, 0.05); }
+}
+
+/* Shared spectrum text fill. `fit-content` matters: the gradient paints
+   across the element box, so a full-width block would only show the red
+   end of the ramp behind a short word. */
+.tld,
+.spectrum-text,
+.metric-value.gay {
+  background-image: linear-gradient(
+    92deg, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5), var(--s6)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.topbar-meta {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* the tagline wraps to three cramped lines below this — drop it instead */
+@media (max-width: 600px) {
+  .topbar-meta { display: none; }
+}
+
+/* ── Hero ───────────────────────────────────────────────── */
+.hero {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: clamp(3rem, 9vw, 6.5rem) var(--gutter) clamp(2rem, 5vw, 3.5rem);
+  display: grid;
+  gap: clamp(2.5rem, 6vw, 4rem);
+  grid-template-columns: 1fr;
+  align-items: center;
+}
+
+@media (min-width: 940px) {
+  .hero { grid-template-columns: 1.15fr 0.85fr; }
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 1.25rem;
+}
+
+.hero h1 {
+  font-size: clamp(3.25rem, 12vw, 7rem);
+  letter-spacing: -0.045em;
+  line-height: 0.94;
+}
+
+.hero h1 .spectrum-text {
+  display: block;
+  width: fit-content;
+  padding-right: 0.06em; /* keep the 'y' descender off the clip edge */
+}
+
+.lede {
+  margin-top: 1.6rem;
+  max-width: 34ch;
+  font-size: var(--t-lede);
+  line-height: 1.55;
+  color: var(--text-mid);
+}
+
+/* resolver terminal */
+.resolver {
+  background: var(--bg-deep);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.9);
+}
+
+.resolver-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+}
+
+.resolver-dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--line);
+}
+.resolver-dot:nth-child(1) { background: #4A3550; }
+.resolver-dot:nth-child(2) { background: #4A4335; }
+.resolver-dot:nth-child(3) { background: #354A3E; }
+
+.resolver-name {
+  margin-left: 0.4rem;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  color: var(--text-dim);
+}
+
+.resolver pre {
+  margin: 0;
+  padding: 1.25rem 1.1rem 1.45rem;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: clamp(0.7rem, 2.2vw, 0.8125rem);
+  line-height: 1.75;
+  color: var(--text-mid);
+}
+
+.c-prompt { color: var(--pink); }
+.c-dim    { color: var(--text-dim); }
+.c-key    { color: var(--s6); }
+.c-val    { color: var(--s3); }
+.c-ok     { color: var(--mint); }
+
+/* ── Status banner ──────────────────────────────────────── */
+.banner {
+  max-width: var(--wrap-inner);
+  margin: 0 auto;
+  padding: 1.4rem clamp(1.1rem, 3vw, 1.75rem);
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  flex-wrap: wrap;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--mint);
+  border-radius: var(--radius);
+  /* pull to gutter width */
+  width: calc(100% - (var(--gutter) * 2));
+}
+
+.banner-icon {
+  flex: none;
+  width: 38px; height: 38px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  background: rgba(61, 220, 151, 0.12);
+  color: var(--mint);
+}
+.banner-icon svg { width: 19px; height: 19px; }
+
+.banner h2 { font-size: var(--t-h2); }
+
+.banner p {
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--text-dim);
+  margin-top: 0.3rem;
+}
+
+.banner #uptime-clock { color: var(--text-mid); }
+
+.banner-check {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: var(--t-micro) !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ── Metrics ────────────────────────────────────────────── */
+.metrics {
+  max-width: var(--wrap-inner);
+  width: calc(100% - (var(--gutter) * 2));
+  margin: clamp(2rem, 5vw, 3rem) auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+  border-left: 0; border-right: 0;
+}
+
+@media (min-width: 720px) {
+  .metrics { grid-template-columns: repeat(4, 1fr); }
+}
+
+.metrics > div {
+  background: var(--bg);
+  padding: 1.4rem clamp(1rem, 2.5vw, 1.6rem);
+}
+
+.metric-label {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+.metric-value {
+  margin-top: 0.5rem;
+  font-size: clamp(1.7rem, 5vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.metric-value span {
+  font-size: 0.45em;
+  font-weight: 500;
+  color: var(--text-dim);
+  margin-left: 0.15em;
+}
+.metric-value.warn { color: var(--amber); }
+
+/* ── Sections ───────────────────────────────────────────── */
+section.uptime,
+section.components,
+section.incidents {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: clamp(3rem, 7vw, 4.75rem) var(--gutter) 0;
+}
+
+.section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--line-soft);
+  margin-bottom: 1.6rem;
+}
+
+.section-head h2 { font-size: var(--t-h2); }
+.section-head h2 code {
+  font-size: 0.82em;
+  font-weight: 400;
+  color: var(--text-mid);
+}
+
+.section-head-meta {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+
+/* ── Pills ──────────────────────────────────────────────── */
+.pill {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.55rem;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+.pill.ok   { background: rgba(61, 220, 151, 0.13); color: var(--mint); }
+.pill.warn { background: rgba(242, 199, 68, 0.13); color: var(--amber); }
+.pill.down { background: rgba(255, 77, 141, 0.14); color: var(--pink); }
+
+/* ── Uptime graph — the signature ───────────────────────── */
+.bars {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  height: 74px;
+}
+
+.bar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: 2px;
+  position: relative;
+  transition: transform 0.14s ease, filter 0.14s ease;
+  animation: rise 0.5s cubic-bezier(0.2, 0.9, 0.3, 1) backwards;
+}
+
+@keyframes rise {
+  from { transform: scaleY(0.15); opacity: 0; }
+  to   { transform: scaleY(1); opacity: 1; }
+}
+
+.bar:hover, .bar:focus-visible {
+  transform: scaleY(1.08);
+  filter: brightness(1.35);
+  z-index: 2;
+}
+
+/* One shared tooltip, positioned and clamped by script.js. A per-bar
+   ::after would hang past the right edge on the last bars and add
+   horizontal scroll on narrow viewports. */
+.bar-tip {
+  position: absolute;
+  bottom: calc(100% + 9px);
+  left: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  line-height: 1.5;
+  padding: 0.4rem 0.6rem;
+  border-radius: 3px;
+  white-space: pre;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.9);
+}
+.bar-tip.on { opacity: 1; }
+
+/* no-JS fallback: the same spectrum, drawn flat */
+.bars-fallback {
+  height: 74px;
+  border-radius: 2px;
+  background: linear-gradient(
+    92deg, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5), var(--s6)
+  );
+}
+
+.bars-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.bars-axis-mid { color: var(--text-mid); }
+@media (max-width: 520px) { .bars-axis-mid { display: none; } }
+
+.uptime-note {
+  margin-top: 1.5rem;
+  max-width: 56ch;
+  font-size: var(--t-sm);
+  color: var(--text-mid);
+}
+
+/* ── Components table ───────────────────────────────────── */
+.components table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--t-sm);
+}
+
+.components thead th {
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  font-weight: 400;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-align: left;
+  padding: 0 0 0.7rem;
+}
+.components thead th:nth-child(2) { text-align: right; }
+.components thead th:nth-child(3) { text-align: right; }
+
+.components tbody tr { border-top: 1px solid var(--line-soft); }
+.components tbody tr:hover { background: rgba(255, 255, 255, 0.018); }
+
+.components tbody th {
+  font-weight: 500;
+  font-size: var(--t-base);
+  text-align: left;
+  padding: 0.95rem 0.75rem 0.95rem 0;
+  color: var(--text);
+}
+.components tbody td {
+  padding: 0.95rem 0 0.95rem 0.75rem;
+  text-align: right;
+  font-family: var(--mono);
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.components tbody td:last-child { width: 1%; }
+
+@media (max-width: 560px) {
+  .components thead th:nth-child(2),
+  .components tbody td:first-of-type { display: none; }
+  .components tbody th { font-size: var(--t-sm); }
+}
+
+/* ── Incidents ──────────────────────────────────────────── */
+.incident-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line-soft);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.incident {
+  background: var(--bg);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+}
+.incident.open { background: var(--surface); }
+
+.incident-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+.incident-meta time {
+  font-family: var(--mono);
+  font-size: var(--t-xs);
+  color: var(--text-dim);
+}
+
+.incident h3 {
+  font-size: var(--t-h3);
+  letter-spacing: -0.025em;
+}
+
+.incident p {
+  margin-top: 0.6rem;
+  max-width: 68ch;
+  font-size: var(--t-sm);
+  line-height: 1.68;
+  color: var(--text-mid);
+}
+.incident code {
+  font-size: 0.92em;
+  color: var(--pink);
+  background: rgba(255, 77, 141, 0.09);
+  padding: 0.08em 0.34em;
+  border-radius: 3px;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+footer {
+  margin-top: clamp(4rem, 9vw, 7rem);
+  border-top: 1px solid var(--line-soft);
+  background: var(--bg-deep);
+}
+
+.footer-inner {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: clamp(2.5rem, 6vw, 3.5rem) var(--gutter);
+}
+
+.footer-mark {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: var(--t-base);
+  letter-spacing: 0.01em;
+}
+
+.footer-note {
+  margin-top: 0.9rem;
+  max-width: 62ch;
+  font-size: var(--t-sm);
+  line-height: 1.65;
+  color: var(--text-dim);
+}
+
+.footer-legal {
+  margin-top: 1.75rem;
+  font-family: var(--mono);
+  font-size: var(--t-micro);
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+
+.spectrum-rule {
+  display: block;
+  height: 2px;
+  width: 100%;
+  margin-bottom: 1.1rem;
+  border-radius: 2px;
+  background: linear-gradient(
+    92deg, var(--s1), var(--s2), var(--s3), var(--s4), var(--s5), var(--s6)
+  );
+  opacity: 0.75;
+}
+
+/* ── Motion & print ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .bar:hover, .bar:focus-visible { transform: none; }
+}

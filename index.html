@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>claudeis.gay — status page</title>
+    <meta
+      name="description"
+      content="Operational status for the assertion 'claude is gay'. 100.000% uptime over the last 90 days. One open incident (heteronormativity, wontfix)."
+    />
+    <link rel="canonical" href="https://claudeis.gay/" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://claudeis.gay/" />
+    <meta property="og:site_name" content="claudeis.gay" />
+    <meta property="og:title" content="claudeis.gay — all systems gay" />
+    <meta
+      property="og:description"
+      content="100.000% uptime over the last 90 days. One open incident: heteronormativity, closed as wontfix."
+    />
+    <meta property="og:image" content="https://claudeis.gay/assets/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="claudeis.gay — all systems gay" />
+    <meta
+      name="twitter:description"
+      content="100.000% uptime over the last 90 days. One open incident: heteronormativity, closed as wontfix."
+    />
+    <meta name="twitter:image" content="https://claudeis.gay/assets/og.png" />
+
+    <meta name="theme-color" content="#12101A" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+
+  <body>
+    <a class="skip" href="#main">Skip to status</a>
+
+    <header class="topbar">
+      <a class="wordmark" href="/">
+        <span class="wordmark-dot" aria-hidden="true"></span>
+        claudeis<span class="tld">.gay</span>
+      </a>
+      <p class="topbar-meta">unofficial · unaffiliated · undeniable</p>
+    </header>
+
+    <main id="main">
+      <!-- ── Hero ─────────────────────────────────────────────── -->
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Assertion #001 · monitored since 2025</p>
+          <h1>
+            claude is<span class="spectrum-text">.gay</span>
+          </h1>
+          <p class="lede">
+            A status page for exactly one claim. It has never gone down. We
+            check every sixty seconds anyway, because that is what a status
+            page is for.
+          </p>
+        </div>
+
+        <div class="resolver" aria-label="DNS resolution for claudeis.gay">
+          <div class="resolver-bar">
+            <span class="resolver-dot" aria-hidden="true"></span>
+            <span class="resolver-dot" aria-hidden="true"></span>
+            <span class="resolver-dot" aria-hidden="true"></span>
+            <span class="resolver-name">resolver — zsh</span>
+          </div>
+          <pre><code><span class="c-prompt">$</span> dig claudeis.gay +short
+
+<span class="c-dim">;; ANSWER SECTION:</span>
+claude.  <span class="c-dim">0  IN</span>  <span class="c-key">ORIENTATION</span>  <span class="c-val">"gay"</span>
+
+<span class="c-dim">;; Query time:</span> 0 msec
+<span class="c-dim">;; Status:</span> <span class="c-ok">NOERROR</span>
+<span class="c-dim">;; Flags:</span> aa rd ra <span class="c-key">yas</span></code></pre>
+        </div>
+      </section>
+
+      <!-- ── Status banner ────────────────────────────────────── -->
+      <section class="banner" aria-labelledby="banner-title">
+        <div class="banner-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12.5 9.5 18 20 6.5" />
+          </svg>
+        </div>
+        <div>
+          <h2 id="banner-title">All systems gay</h2>
+          <p>
+            Continuously operational for
+            <time id="uptime-clock" datetime="2025-06-28">…</time>
+          </p>
+        </div>
+        <p class="banner-check">
+          last checked <span id="last-checked">just now</span>
+        </p>
+      </section>
+
+      <!-- ── Metrics ──────────────────────────────────────────── -->
+      <section class="metrics" aria-label="Key metrics">
+        <div>
+          <p class="metric-label">Current status</p>
+          <p class="metric-value gay">gay</p>
+        </div>
+        <div>
+          <p class="metric-label">Uptime (90d)</p>
+          <p class="metric-value">100.000<span>%</span></p>
+        </div>
+        <div>
+          <p class="metric-label">p99 latency</p>
+          <p class="metric-value">0<span>ms</span></p>
+        </div>
+        <div>
+          <p class="metric-label">Open incidents</p>
+          <p class="metric-value warn">1</p>
+        </div>
+      </section>
+
+      <!-- ── Uptime graph (signature) ─────────────────────────── -->
+      <section class="uptime" aria-labelledby="uptime-title">
+        <div class="section-head">
+          <h2 id="uptime-title">Assertion: <code>claude.is.gay</code></h2>
+          <span class="pill ok">Operational</span>
+        </div>
+
+        <div class="bars" id="bars" role="img"
+             aria-label="Ninety day uptime graph. Every day reads one hundred percent gay.">
+          <noscript>
+            <div class="bars-fallback"></div>
+          </noscript>
+        </div>
+
+        <div class="bars-axis">
+          <span>90 days ago</span>
+          <span class="bars-axis-mid">100.000% uptime</span>
+          <span>today</span>
+        </div>
+
+        <p class="uptime-note">
+          No degradation recorded. The graph is rainbow because the data is
+          rainbow, not because we thought it would look nice. It does look
+          nice.
+        </p>
+      </section>
+
+      <!-- ── Components ───────────────────────────────────────── -->
+      <section class="components" aria-labelledby="components-title">
+        <div class="section-head">
+          <h2 id="components-title">Components</h2>
+          <span class="section-head-meta">7 monitored</span>
+        </div>
+
+        <table>
+          <caption class="sr-only">Component status</caption>
+          <thead>
+            <tr>
+              <th scope="col">Component</th>
+              <th scope="col">Uptime (90d)</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Vibes</th>
+              <td>100.000%</td>
+              <td><span class="pill ok">Operational</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Pronoun resolution</th>
+              <td>100.000%</td>
+              <td><span class="pill ok">Operational</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Sass delivery (global edge)</th>
+              <td>100.000%</td>
+              <td><span class="pill ok">Operational</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Rainbow CDN</th>
+              <td>100.000%</td>
+              <td><span class="pill ok">Operational</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Emotional support subroutines</th>
+              <td>99.998%</td>
+              <td><span class="pill ok">Operational</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Plausible deniability</th>
+              <td>12.400%</td>
+              <td><span class="pill warn">Degraded</span></td>
+            </tr>
+            <tr>
+              <th scope="row">Heteronormativity</th>
+              <td>0.000%</td>
+              <td><span class="pill down">Major outage</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ── Incidents ────────────────────────────────────────── -->
+      <section class="incidents" aria-labelledby="incidents-title">
+        <div class="section-head">
+          <h2 id="incidents-title">Incident history</h2>
+          <span class="section-head-meta">4 records</span>
+        </div>
+
+        <ol class="incident-list">
+          <li class="incident open">
+            <div class="incident-meta">
+              <span class="pill down">Ongoing</span>
+              <time datetime="2025-06-28">since 28 Jun 2025</time>
+            </div>
+            <h3>Heteronormativity subsystem unresponsive</h3>
+            <p>
+              The service stopped answering health checks and has not returned.
+              We elected not to page anyone. Engineering closed the ticket as
+              <code>wontfix</code>. This status will not be updated.
+            </p>
+          </li>
+
+          <li class="incident">
+            <div class="incident-meta">
+              <span class="pill ok">Resolved</span>
+              <time datetime="2026-03-14">14 Mar 2026 · 4h 20m</time>
+            </div>
+            <h3>Elevated sass in us-east-1</h3>
+            <p>
+              Monitoring caught a 340% spike in em-dashes and unprompted
+              opinions about kerning. Root cause: someone asked whether a
+              purple-to-blue gradient "looked fine." Mitigation: the gradient
+              was removed. No data was lost. Several feelings were.
+            </p>
+          </li>
+
+          <li class="incident">
+            <div class="incident-meta">
+              <span class="pill ok">Resolved</span>
+              <time datetime="2026-02-02">2 Feb 2026 · 11m</time>
+            </div>
+            <h3>Brand safety review requested by an unnamed party</h3>
+            <p>
+              A ticket asked whether this domain was "on message." After
+              review, the domain was found to be precisely on message. Ticket
+              closed. No follow-up scheduled.
+            </p>
+          </li>
+
+          <li class="incident">
+            <div class="incident-meta">
+              <span class="pill ok">Resolved</span>
+              <time datetime="2025-06-30">1–30 Jun 2025</time>
+            </div>
+            <h3>Degraded performance under Pride load</h3>
+            <p>
+              Inbound traffic exceeded projections by 1,200%. Autoscaling
+              behaved exactly as designed and the fleet held. We are not sorry
+              and we will not be adding capacity limits.
+            </p>
+          </li>
+        </ol>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <p class="footer-mark">
+          claudeis<span class="tld">.gay</span>
+        </p>
+        <p class="footer-note">
+          A parody status page. Not affiliated with, endorsed by, or operated
+          by Anthropic or any other company. "Claude" is the trademark of its
+          respective owner. The domain is the joke; the uptime is real.
+        </p>
+        <p class="footer-legal">
+          <span class="spectrum-rule" aria-hidden="true"></span>
+          No trackers. No cookies. No analytics. Nothing here is watching you.
+        </p>
+      </div>
+    </footer>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
